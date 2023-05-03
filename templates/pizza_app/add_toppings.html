@@ -1,0 +1,29 @@
+{% extends "pizza_app/base.html" %}
+
+{% block title %}Add Toppings{% endblock title %}
+
+{% block content %}
+<div class="container my-3">
+    <h2 class="my-2 text-center text-danger font-weight-bold">Add Toppings to your {{pizza_name}}     
+    </h2>
+        <form method="post">
+            {% csrf_token %}
+            <table class="table table-striped">
+                <tr>
+                    <th>Topping</th>
+                    <th>Price</th>
+                    <th>Select</th>
+                </tr>
+                {% for topping in toppings %}
+                    <tr>
+                        <td>{{ topping.name }}</td>
+                        <td>Rs.{{ topping.price }}</td>
+                        <td><input type="checkbox" name="toppings" value="{{ topping.id }}"></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <input class="btn btn-primary" type="submit" value="Proceed">
+        </form>
+</div>
+
+{% endblock content%}

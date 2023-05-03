@@ -1,0 +1,130 @@
+{% extends "pizza_app/base.html" %}
+{% block title %}PizzaHome{% endblock title %}
+
+{% block content %}
+<div id="CarouselWithControls" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        {% for img in images %}
+        {% if forloop.first %}
+        <div class="carousel-item {% if forloop.first %} active {% endif %}">
+            <img src="{{ img.image.url }}" class="d-block w-100">
+        </div>
+        {% else %}
+        <div class="carousel-item {% if  forloop.first %} active {% endif %}">
+            <img src="{{ img.image.url }}" class="d-block w-100">
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<div class="container my-3">
+    <h2 class="my-2 text-center text-danger font-weight-bold">Our Pizza</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+        {% for pizza in pizza_menu %}
+        {% if pizza.category == 'VEG' %}
+        <div class="col my-2">
+            <div class="card shadow-md">
+                <img src="{{pizza.image.url}}" class="card-img-top" alt="{{pizza.name}}">
+                <div class="card-body">
+                    <h5 class="card-text text-bold">{{pizza.name}}</h5>
+                    <p class="card-text text-muted">{{pizza.description}}</p>
+                    <div>
+                        <select class="form-select form-select-md mb-2" aria-label=".form-select-md example">
+                            {% for size in pizza.size_set.all %}
+                            <option value='{"pizza_size":"{{size.name}}","pizza_price":"{{size.price}}"}'>{{ size.name }}-{{size.price|floatformat:0 }}Rs.</option>
+                            {% endfor %}
+                        </select>
+                    </div> 
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn btn-danger" onclick="get_pizza_name('{{pizza.name}}')">Add To Cart</button>
+                        </div>
+                        <div class="badge btn btn-success" style="width: 4rem;">
+                            Veg
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {%else %}
+        <div class="col my-2">
+            <div class="card shadow-md">
+                <img src="{{pizza.image.url}}" class="card-img-top" alt="{{pizza.name}}">
+                <div class="card-body">
+                    <h5 class="card-text text-bold">{{pizza.name}}</h5>
+                    <p class="card-text text-muted">{{pizza.description}}</p>
+                    <div>
+                        <select class="form-select form-select-md mb-2" aria-label=".form-select-md example">
+                            {% for size in pizza.size_set.all %}
+                            <option value='{"pizza_size":"{{size.name}}","pizza_price":"{{size.price}}"}'>{{ size.name }}-{{size.price|floatformat:0 }}Rs.</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn btn-danger" onclick="get_pizza_name('{{pizza.name}}')">Add To Cart</button>
+                        </div>
+                        <div class="badge btn btn-danger" style="width: 4rem;">
+                            Non-Veg
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+        <!--About Modal -->
+        <div class="modal fade" id="addtocartModalToggle" tabindex="-1" role="dialog"
+            aria-labelledby="addtocartModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-danger"><span id="ModalLongTitle"></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container my-3">
+                            <h5 class="my-2 text-center text-danger font-weight-bold"><span id="pizaa_details"></span></h5>
+                            <form method="post">
+                                {% csrf_token %}
+                                <table class="table table-striped ">
+                                    <tr>
+                                        <th>Topping</th>
+                                        <th>Price</th>
+                                        <th>Select</th>
+                                    </tr>
+                                    {% for topping in toppings %}
+                                    <tr>
+                                        <td>{{ topping.name }}</td>
+                                        <td>Rs.{{ topping.price }}</td>
+                                        <td><input type="checkbox" name="toppings" value="{{ topping.id }}"></td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                                <input class="btn btn-primary" type="submit" value="Proceed">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script>
+        function get_pizza_name(pizza_name) {
+            console.log(pizza_name);
+            $("#ModalLongTitle").text(pizza_name);
+            $('#addtocartModalToggle').modal('show');
+            //var select = document.querySelector(".form-select");
+            //var selectedOption = select.options[select.selectedIndex];
+            //var selectedOptionValue = selectedOption.value;
+            //console.log(selectedOptionValue);
+        }   
+
+    </script>
+{% endblock content%}
